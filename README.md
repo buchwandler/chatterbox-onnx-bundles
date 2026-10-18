@@ -75,10 +75,9 @@ A deterministic rebuild at unchanged upstream revisions produces byte-identical 
 scheduled refresh workflow builds twice, compares both catalog files, verifies the result, and
 commits only generated catalog/provenance changes.
 
-The CI workflows currently check out the OnnxVoice `main` source so this repository can be
-validated before the first public OnnxVoice release containing Chatterbox support. Once that
-release exists, pin the workflows to its released version as described by the implementation
-plan; do not guess a version before publication.
+For release 0.1.0, CI and catalog generation use OnnxVoice v0.2.11 and assert the installed
+version. This documents tooling provenance, not an exact dependency requirement for catalog
+consumers; ChatterboxSynth will declare its supported dependency range.
 
 ## Licensing and attribution
 

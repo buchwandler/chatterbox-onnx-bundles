@@ -14,13 +14,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: buchwandler/onnxvoice
-          ref: main
+          ref: v0.2.11
           path: _ci/onnxvoice
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install OnnxVoice catalog tooling
         run: python -m pip install --editable _ci/onnxvoice
+      - name: Assert OnnxVoice release version
+        run: python -c "import onnxvoice; assert onnxvoice.__version__ == '0.2.11', onnxvoice.__version__; print(onnxvoice.__version__)"
       - name: Check bundle catalog integrity
         run: python scripts/check_catalog_integrity.py
       - name: Verify catalog with OnnxVoice
