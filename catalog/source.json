@@ -1,0 +1,22 @@
+{
+  "artifact_count": 31,
+  "bundle_count": 2,
+  "kind": "chatterbox-onnx-source-snapshot",
+  "schema": 1,
+  "sources": [
+    {
+      "id": "nano-v2",
+      "provider": "huggingface",
+      "repository": "KitsuMate/chatterbox-nano-v2-onnx",
+      "requested_revision": "main",
+      "revision": "851210533a5bcb4ad78e3ada6d527482dd1a31e7"
+    },
+    {
+      "id": "turbo",
+      "provider": "huggingface",
+      "repository": "ResembleAI/chatterbox-turbo-ONNX",
+      "requested_revision": "main",
+      "revision": "d21799bd0354adb85e348b8a0442a8405110a2cf"
+    }
+  ]
+}

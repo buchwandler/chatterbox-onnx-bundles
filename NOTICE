@@ -1,0 +1,16 @@
+Chatterbox ONNX artifact provenance
+
+The catalog references ONNX graphs, external-data files, tokenizer data, and configuration files
+from these upstream repositories:
+
+- https://huggingface.co/KitsuMate/chatterbox-nano-v2-onnx
+- https://huggingface.co/ResembleAI/chatterbox-turbo-ONNX
+
+The catalog preserves the exact resolved upstream commit for each bundle in
+catalog/bundles.json and catalog/source.json. Upstream model and tokenizer artifacts are not
+included in this repository or its development ZIP. Their licenses, notices, and attribution
+requirements are determined by the corresponding upstream snapshot; this NOTICE does not grant
+additional rights or relicense those artifacts.
+
+The catalog, schema, integrity checker, and documentation authored for this repository are
+licensed under Apache License 2.0, as stated in LICENSE.

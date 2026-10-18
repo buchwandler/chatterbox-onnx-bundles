@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/buchwandler/chatterbox-onnx-bundles/schemas/bundle-catalog.schema.json",
+  "title": "Chatterbox ONNX bundle catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "kind", "bundles"],
+  "properties": {
+    "schema": {"const": 1},
+    "kind": {"const": "chatterbox-onnx-bundle-catalog"},
+    "bundles": {
+      "type": "object",
+      "minProperties": 2,
+      "maxProperties": 2,
+      "propertyNames": {"enum": ["nano-v2", "turbo"]},
+      "required": ["nano-v2", "turbo"],
+      "additionalProperties": {"$ref": "#/$defs/bundle"}
+    }
+  },
+  "$defs": {
+    "safeName": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)(?:\\.|\\.\\.)(?:/|$)).+$"
+    },
+    "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "repository", "requested_revision", "revision"],
+      "properties": {
+        "provider": {"const": "huggingface"},
+        "repository": {"type": "string", "pattern": "^[^/\\\\\\s]+/[^/\\\\\\s]+$"},
+        "requested_revision": {"type": "string", "minLength": 1},
+        "revision": {"$ref": "#/$defs/revision"}
+      }
+    },
+    "sourceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "kind", "bundle_count", "artifact_count", "sources"],
+      "properties": {
+        "schema": {"const": 1},
+        "kind": {"const": "chatterbox-onnx-source-snapshot"},
+        "bundle_count": {"const": 2},
+        "artifact_count": {"type": "integer", "minimum": 1},
+        "sources": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "provider", "repository", "requested_revision", "revision"],
+            "properties": {
+              "id": {"enum": ["nano-v2", "turbo"]},
+              "provider": {"const": "huggingface"},
+              "repository": {"type": "string", "minLength": 3},
+              "requested_revision": {"type": "string", "minLength": 1},
+              "revision": {"$ref": "#/$defs/revision"}
+            }
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "filename", "quality", "role", "sha256", "size", "source_path", "url"],
+      "properties": {
+        "component": {"type": ["string", "null"], "enum": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder", null]},
+        "filename": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"},
+        "quality": {"type": ["string", "null"], "enum": ["fp32", "int8", "int8_mixed", "q4f16", null]},
+        "role": {"enum": ["external_data", "graph", "tokenizer", "tokenizer_config", "upstream_manifest", "model_config", "generation_config"]},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size": {"type": "integer", "minimum": 1},
+        "source_path": {"$ref": "#/$defs/relativePath"},
+        "url": {"type": "string", "pattern": "^https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/.+$"}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder"],
+      "properties": {
+        "speech_encoder": {"enum": ["fp32", "q4f16"]},
+        "embed_tokens": {"enum": ["fp32", "q4f16"]},
+        "language_model": {"enum": ["fp32", "int8_mixed", "q4f16"]},
+        "conditional_decoder": {"enum": ["fp32", "int8", "q4f16"]}
+      }
+    },
+    "nanoCpuProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder"],
+      "properties": {
+        "speech_encoder": {"const": "fp32"},
+        "embed_tokens": {"const": "fp32"},
+        "language_model": {"const": "int8_mixed"},
+        "conditional_decoder": {"const": "int8"}
+      }
+    },
+    "nanoFp32Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder"],
+      "properties": {
+        "speech_encoder": {"const": "fp32"},
+        "embed_tokens": {"const": "fp32"},
+        "language_model": {"const": "fp32"},
+        "conditional_decoder": {"const": "fp32"}
+      }
+    },
+    "turboFp32Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder"],
+      "properties": {
+        "speech_encoder": {"const": "fp32"},
+        "embed_tokens": {"const": "fp32"},
+        "language_model": {"const": "fp32"},
+        "conditional_decoder": {"const": "fp32"}
+      }
+    },
+    "turboQ4f16Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["speech_encoder", "embed_tokens", "language_model", "conditional_decoder"],
+      "properties": {
+        "speech_encoder": {"const": "q4f16"},
+        "embed_tokens": {"const": "q4f16"},
+        "language_model": {"const": "q4f16"},
+        "conditional_decoder": {"const": "q4f16"}
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_speech_token", "stop_speech_token", "silence_token", "trailing_silence_tokens", "default_max_new_tokens", "default_repetition_penalty"],
+      "properties": {
+        "start_speech_token": {"type": "integer", "minimum": 0},
+        "stop_speech_token": {"type": "integer", "minimum": 0},
+        "silence_token": {"type": "integer", "minimum": 0},
+        "trailing_silence_tokens": {"type": "integer", "minimum": 0},
+        "default_max_new_tokens": {"type": "integer", "minimum": 1},
+        "default_repetition_penalty": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aliases", "artifacts", "default_profile", "frontend", "id", "language", "profiles", "runtime", "sample_rate", "source", "system"],
+      "properties": {
+        "aliases": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/safeName"}},
+        "artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifact"}},
+        "default_profile": {"enum": ["cpu", "fp32", "q4f16"]},
+        "frontend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tokenizer_contract", "tokenizer_path", "tokenizer_role"],
+          "properties": {
+            "tokenizer_contract": {"enum": ["nano-v2", "turbo"]},
+            "tokenizer_path": {"const": "tokenizer.json"},
+            "tokenizer_role": {"const": "tokenizer"}
+          }
+        },
+        "id": {"enum": ["nano-v2", "turbo"]},
+        "language": {"const": "en"},
+        "profiles": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/profile"}
+        },
+        "runtime": {"$ref": "#/$defs/runtime"},
+        "sample_rate": {"const": 24000},
+        "source": {"$ref": "#/$defs/source"},
+        "system": {"const": "chatterbox"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"id": {"const": "nano-v2"}}, "required": ["id"]},
+          "then": {
+            "properties": {
+              "default_profile": {"const": "cpu"},
+              "frontend": {"properties": {"tokenizer_contract": {"const": "nano-v2"}}},
+              "profiles": {
+                "required": ["cpu", "fp32"],
+                "properties": {
+                  "cpu": {"$ref": "#/$defs/nanoCpuProfile"},
+                  "fp32": {"$ref": "#/$defs/nanoFp32Profile"}
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"id": {"const": "turbo"}}, "required": ["id"]},
+          "then": {
+            "properties": {
+              "default_profile": {"const": "fp32"},
+              "frontend": {"properties": {"tokenizer_contract": {"const": "turbo"}}},
+              "profiles": {
+                "required": ["fp32", "q4f16"],
+                "properties": {
+                  "fp32": {"$ref": "#/$defs/turboFp32Profile"},
+                  "q4f16": {"$ref": "#/$defs/turboQ4f16Profile"}
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
