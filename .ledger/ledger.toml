@@ -1,0 +1,18 @@
+schema_version = 3
+
+[project]
+uuid = "15c0bb26-cb10-43f0-9596-6b0e67cdc1df"
+name = "chatterbox-onnx-bundles"
+
+[ledgers.taskledger.mounts.data]
+storage = "external"
+root = "../ledger"
+
+[ledgers.taskledger.mounts.runtime]
+storage = "user-data"
+
+[ledgers.taskledger.mounts.logs]
+storage = "user-data"
+
+[ledgers.taskledger.mounts.indexes]
+storage = "cache"
